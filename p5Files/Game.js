@@ -2,6 +2,7 @@ class Game{
     static gaming = true;
     static playerCount = 2;
     static players = [];
+    static pool = [];
     static modes = {
         SINGLE: "single",
         DOUBLE: "double",
@@ -24,7 +25,7 @@ class Game{
     }
 
     static initializeGame(){
-        this.deck.shuffle();
+        deck.shuffle();
         createPlayers();
         for(let i = 0; i < players.length; i++){
             fillHands(players[i]);
@@ -41,6 +42,28 @@ class Game{
         for(let i = 0; i < 52/playerCount; i++){
             player.hand.addCard(deck.draw());
         }
+    }
+
+    static determineMode(cards){
+        //determines the type of cards given ex. Singles, Doubles, Poker, etc.
+        let determinedMode;
+        //if pool is empty then mode becomes whatever is played
+        if(pool == []){
+            mode = determinedMode;
+        }
+    }
+
+    static validated(cards, cardMode){
+        //Check if selected cards are valid to play on current pool
+
+        //An empty pool means anything can be played 
+        if(pool == []){
+            return true;
+        }
+        else if(cardMode != mode){
+            return false;
+        }
+
     }
 
     

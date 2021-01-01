@@ -18,5 +18,10 @@ class Player{
         }
     }
 
-    
+    playCards(){
+        if(Game.validated(this.selectedCards, Game.determineMode(this.selectedCards))){
+            Game.pool = this.selectedCards;
+        }
+    }
+
 }
