@@ -18,8 +18,23 @@ class Player{
         }
     }
 
+    sortCards(){
+        for(let i = 0; i < this.selectedCards.length-1; i++){
+            for(let j = 0; j < this.selectedCards.length-i-1; i++){
+                if (this.selectedCards[j].rank > this.selectedCards[j+1].rank){ 
+                    // swap  
+                    temp = this.selectedCards[j]; 
+                    this.selectedCards[j] = this.selectedCards[j+1]; 
+                    this.selectedCards[j+1] = temp; 
+                } 
+            }
+        }
+    }
+
+
     playCards(){
-        if(Game.validated(this.selectedCards, Game.determineMode(this.selectedCards))){
+        sortCards()
+        if(Game.validated(this, Game.determineMode(this.selectedCards))){
             Game.pool = this.selectedCards;
         }
     }
