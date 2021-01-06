@@ -1,7 +1,7 @@
 class Game{
-
     static gaming = true;
-    static playerCount = 2;
+    static playerCount = 0;
+    static turn = 0;
     static players = [];
     static pool = [];
     static modes = {
@@ -19,6 +19,7 @@ class Game{
 
     static addPlayer(player){
         player.push(player);
+        playerCount ++;
     }
 
     static setState(state){
@@ -42,6 +43,26 @@ class Game{
     static fillHands(player){
         for(let i = 0; i < 52/playerCount; i++){
             player.hand.addCard(deck.draw());
+        }
+    }
+
+    static gameOver(){
+        let remaining = 0;
+        for(let i = 0; i < playerCount; i++){
+            if(players[i].done()){
+                remaining ++;
+            }
+        }
+
+        return remaining == 1;
+    }
+
+    static nextTurn(){
+        if(turn < this.playerCount-1){
+            turn ++;
+        }
+        else{
+            turn = 0;
         }
     }
 
@@ -84,7 +105,8 @@ class Game{
         else if(cardMode != mode){
             return false;
         }
-        // more code dem
+
+        // checks which type of cards to check depending on the type played
         switch(cardMode){
             case modes.SINGLE:
                 return singleCheck(player);
@@ -98,6 +120,9 @@ class Game{
     }
 
     static singleCheck(player){
+        if(player.selectedCards.length != 1){
+            return false;
+        }
         // higher cards can be placed
         if(player.selectedCards[0].rank > pool[0].rank){
             return true;
@@ -114,6 +139,9 @@ class Game{
     }
 
     static doubleCheck(player){
+        if(player.selectedCards.length != 2){
+            return false;
+        }
         // cards have to be the same rank to be considered a double
         if(player.selectedCards[0].rank != player.selectedCards[1].rank){
             return false;
@@ -135,6 +163,9 @@ class Game{
     }
 
     static tripleCheck(player){
+        if(player.selectedCards.length != 3){
+            return false;
+        }
         // check if all three cards are equal rank
         if(player.selectedCards[0].rank != player.selectedCards[1].rank || player.selectedCards[0].rank != player.selectedCards[2].rank){
             return false;

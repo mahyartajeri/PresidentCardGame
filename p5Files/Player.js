@@ -39,4 +39,10 @@ class Player{
         }
     }
 
+    done(){
+        return this.hand.isEmpty();
+    }
+
+    
+
 }

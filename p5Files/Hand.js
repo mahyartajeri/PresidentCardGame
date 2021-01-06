@@ -20,5 +20,9 @@ class Hand{
         this.hand.push(card);
     }
 
+    isEmpty(){
+        return this.hand == [];
+    }
+
 
 }
