@@ -1,10 +1,20 @@
 class Player{ 
+    positions = {
+        PRESIDENT: "p",
+        VICEPRESIDENT: "vp",
+        NEUTRAL: "n",
+        VICEBUM: "vb",
+        BUM: "b"
+    }
+    position = positions.NEUTRAL;
     selectedCards = [];
     hand = new Hand();
 
     constructor(playerID){
         this.playerID = playerID;
     }
+
+
 
     selectCard(i){
         this.selectedCards.push(i);
@@ -36,12 +46,14 @@ class Player{
         sortCards()
         if(Game.validated(this, Game.determineMode(this.selectedCards))){
             Game.pool = this.selectedCards;
+            this.selectedCards = [];
         }
     }
 
     done(){
         return this.hand.isEmpty();
     }
+
 
     
 

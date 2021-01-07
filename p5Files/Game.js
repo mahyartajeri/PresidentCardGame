@@ -4,14 +4,21 @@ class Game{
     static turn = 0;
     static players = [];
     static pool = [];
+    static winners = [];
+    static order = [];
+    static firstGame = true;
     static modes = {
         SINGLE: "single",
         DOUBLE: "double",
         TRIPLE: "triple",
         POKER: "poker"
     }
-    static deck = new Deck();
-    static mode = modes.SINGLE;
+    static deck = "empty!"
+    static mode = Game.modes.SINGLE;
+
+    static clearPool(){
+        pool = [];
+    }
     
     static setMode(mode){
         mode = mode;
@@ -27,11 +34,48 @@ class Game{
     }
 
     static initializeGame(){
+        deck = new Deck();
         deck.shuffle();
         createPlayers();
         for(let i = 0; i < players.length; i++){
             fillHands(players[i]);
         }
+        //For the first game, everyone is neutral so the order doesn't matter
+        if(firstGame){
+            for(let i = 0; i < players.length; i++){
+                order.push(players[i].playerID)
+            }
+        }
+        else{
+            for(let i = 0; i < players.length; i++){
+                //bum goes first
+                if(players[i].position == "b"){
+                    this.order[0] = players[i].playerID;
+                }
+                else if(players[i].position == "vb"){
+                    this.order[1] = players[i].playerID;
+                }
+                else if(players[i].position == "vp"){
+                    this.order[1] = players[players.length-2].playerID;
+                }
+                //president goes last
+                else if(players[i].position == "p"){
+                    this.order[1] = players[players.length-1].playerID;
+                }
+            }
+        }
+    }
+
+    static shiftArr(arr, shift){
+        let temp1 = []
+        let temp2 = []
+        for(let i = arr.length-shift; i < arr.length; i++){
+            temp1.push(arr[i]);
+        }
+        for(let i = 0; i < arr.length-shift; i++){
+            temp2.push(arr[i]);
+        }
+        return temp1.concat(temp2);
     }
 
     static createPlayers(){
@@ -46,9 +90,18 @@ class Game{
         }
     }
 
-    static gameOver(){
+    static exitPlayers(){
+        for(let i = 0; i < players.length; i++){
+            //adds the player id of players who are done
+            if(players[i].done()){
+                winners.push(players[i].playerID);
+            }
+        }
+    }
+
+    static isGameOver(){
         let remaining = 0;
-        for(let i = 0; i < playerCount; i++){
+        for(let i = 0; i < player.length; i++){
             if(players[i].done()){
                 remaining ++;
             }
@@ -58,12 +111,7 @@ class Game{
     }
 
     static nextTurn(){
-        if(turn < this.playerCount-1){
-            turn ++;
-        }
-        else{
-            turn = 0;
-        }
+        
     }
 
     static determineMode(cards){
