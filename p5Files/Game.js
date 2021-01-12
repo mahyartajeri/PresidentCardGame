@@ -16,69 +16,69 @@ class Game{
     static mode = Game.modes.SINGLE;
 
     static clearPool(){
-        pool = [];
+        Game.pool = [];
     }
     
     static setMode(mode){
-        mode = mode;
+        Game.mode = mode;
     }
 
     static addPlayer(player){
-        player.push(player);
-        playerCount ++;
+        Game.players.push(player);
+        Game.playerCount ++;
     }
 
     static setState(state){
-        gaming = state;
+        Game.gaming = state;
     }
 
     static initializeGame(){
-        order = [];
-        deck = new Deck();
-        deck.shuffle();
-        createPlayers();
-        for(let i = 0; i < players.length; i++){
-            fillHands(players[i]);
+        Game.order = [];
+        Game.deck = new Deck();
+        Game.deck.shuffle();
+        Game.createPlayers();
+        for(let i = 0; i < Game.players.length; i++){
+            Game.fillHand(Game.players[i]);
         }
         //fill up the order 
-        for(let i = 0; i < players.length; i++){
-            order.push(players[i].playerID);
+        for(let i = 0; i < Game.players.length; i++){
+            Game.order.push(Game.players[i].playerID);
         }
         
         
     }
 
     static resetGame(){
-        order = [];
-        deck = new Deck();
-        deck.shuffle();
+        Game.order = [];
+        Game.deck = new Deck();
+        Game.deck.shuffle();
 
-        for(let i = 0; i < players.length; i++){
-            players[i].clearHand();
-            fillHands(players[i]);
+        for(let i = 0; i < Game.players.length; i++){
+            Game.players[i].clearHand();
+            Game.fillHand(Game.players[i]);
         }
 
         //after the first game, the bum will go first
         
-        for(let i = 0; i < players.length; i++){
+        for(let i = 0; i < Game.players.length; i++){
             //bum goes first 
-            if(players[i].position == "b"){
+            if(Game.players[i].position == "b"){
                 if(i > 0){
                     //shifts the order of player so that the bum is first
-                    shiftArr(order, players.length-i);
+                    Game.shiftArr(order, players.length-i);
                     break;
                 }
             }
             
         }
 
-        winners = [];
+        Game.winners = [];
         
     }
 
     static shiftArr(arr, shift){
-        let temp1 = []
-        let temp2 = []
+        let temp1 = [];
+        let temp2 = [];
         for(let i = arr.length-shift; i < arr.length; i++){
             temp1.push(arr[i]);
         }
@@ -89,36 +89,36 @@ class Game{
     }
 
     static createPlayers(){
-        for(let i = 0; i < playerCount; i++){
-            this.players.push(new Player(i));
+        for(let i = 0; i < Game.playerCount; i++){
+            Game.players.push(new Player(i));
         }
     }
 
     static fillHand(player){
-        for(let i = 0; i < 52/playerCount; i++){
-            player.hand.addCard(deck.draw());
+        for(let i = 0; i < 52/Game.playerCount; i++){
+            player.hand.addCard(Game.deck.draw());
         }
     }
 
     static exitPlayers(){
-        for(let i = 0; i < players.length; i++){
+        for(let i = 0; i < Game.players.length; i++){
             // adds the player id of players who are done
-            if(players[i].done()){
-                winners.push(players[i].playerID);
+            if(Game.players[i].done()){
+                Game.winners.push(Game.players[i].playerID);
             }
         }
         // removing won player from order
         for(let i = 0; i < order.length; i++){
-            if(winners.includes(order[i])){
-                this.order.splice(i, 1);
+            if(Game.winners.includes(Game.order[i])){
+                Game.order.splice(i, 1);
             }
         }
     }
 
     static isGameOver(){
-        let remaining = player.length;
-        for(let i = 0; i < player.length; i++){
-            if(players[i].done()){
+        let remaining = Game.players.length;
+        for(let i = 0; i < Game.players.length; i++){
+            if(Game.players[i].done()){
                 remaining --;
             }
         }
@@ -127,39 +127,39 @@ class Game{
     }
 
     static FinishGame(){
-        setWinners();
-        resetGame();
+        Game.setWinners();
+        Game.resetGame();
     }
 
     static setWinners(){
-        for(let i = 0; i < winners.length; i++){
+        for(let i = 0; i < Game.winners.length; i++){
             if(i == 0){
-                winners[i].wincount += 1;
-                winners[i].position = Player.positions.PRESIDENT;
+                Game.winners[i].wincount += 1;
+                Game.winners[i].position = Player.positions.PRESIDENT;
             }
             else if(i == 1){
-                winners[i].position = Player.positions.VICEPRESIDENT;
+                Game.winners[i].position = Player.positions.VICEPRESIDENT;
             }
             else if(i < length - 2){
-                winners[i].position = Player.positions.NEUTRAL;
+                Game.winners[i].position = Player.positions.NEUTRAL;
             }
             else if(i == length - 2){
-                winners[i].position = Player.positions.VICEBUM;
+                Game.winners[i].position = Player.positions.VICEBUM;
             }
             else if(i == length - 1){
-                winners[i].position = Player.positions.BUM;
+                Game.winners[i].position = Player.positions.BUM;
             }
         }
     }
 
     static nextTurn(){
-        for(let i = 0; i < order.length; i++){
-            if(order[i] == turn){
-                if(i < order.length + 1){
-                    turn = order[i+1];
+        for(let i = 0; i < Game.order.length; i++){
+            if(Game.order[i] == Game.turn){
+                if(i < Game.order.length + 1){
+                    Game.turn = order[i+1];
                 }
                 else{
-                    turn = order[0];
+                    Game.turn = order[0];
                 }
             }
         }
@@ -171,21 +171,21 @@ class Game{
         
         switch(cards.length){
             case 1:
-                determinedMode = modes.SINGLE;
+                determinedMode = Game.modes.SINGLE;
                 break;
             case 2:
-                determinedMode = modes.DOUBLE;
+                determinedMode = Game.modes.DOUBLE;
                 break;
             case 3:
-                determinedMode = modes.TRIPLE;
+                determinedMode = Game.modes.TRIPLE;
                 break;
             default:
-                determinedMode = modes.POKER;
+                determinedMode = Game.modes.POKER;
         }
 
         //if pool is empty then mode becomes whatever is played
-        if(pool == []){
-            mode = determinedMode;
+        if(Game.pool == []){
+            Game.mode = determinedMode;
         }
     }
 
@@ -198,23 +198,23 @@ class Game{
         }
 
         //An empty pool means anything can be played 
-        if(pool == []){
+        if(Game.pool == []){
             return true;
         }
-        else if(cardMode != mode){
+        else if(cardMode != Game.mode){
             return false;
         }
 
         // checks which type of cards to check depending on the type played
         switch(cardMode){
-            case modes.SINGLE:
-                return singleCheck(player);
-            case modes.DOUBLE:
-                return singleCheck(player);
-            case modes.TRIPLE:
-                return singleCheck(player);
-            case modes.POKER:
-                return pokerCheck(player);
+            case Game.modes.SINGLE:
+                return Game.singleCheck(player);
+            case Game.modes.DOUBLE:
+                return Game.singleCheck(player);
+            case Game.modes.TRIPLE:
+                return Game.singleCheck(player);
+            case Game.modes.POKER:
+                return Game.pokerCheck(player);
         }
     }
 
@@ -223,13 +223,13 @@ class Game{
             return false;
         }
         // higher cards can be placed
-        if(player.selectedCards[0].rank > pool[0].rank){
+        if(player.selectedCards[0].rank > Game.pool[0].rank){
             return true;
         }
 
         //if same rank then suit takes priority (spades, hearts, clubs, diamond)
-        else if(player.selectedCards[0].rank == pool[0].rank){
-            if(player.selectedCards[0].suit > pool[0].suit){
+        else if(player.selectedCards[0].rank == Game.pool[0].rank){
+            if(player.selectedCards[0].suit > Game.pool[0].suit){
                 return true;
             }
         }
@@ -247,12 +247,12 @@ class Game{
         }
 
         // greater rank means you can play it
-        if(player.selectedCards[0].rank > pool[0].rank){
+        if(player.selectedCards[0].rank > Game.pool[0].rank){
             return true;
         }
 
         // Whichever equivalent pair has the spade wins
-        else if(player.selectedCards[0].rank == pool[0].rank){
+        else if(player.selectedCards[0].rank == Game.pool[0].rank){
             if(player.selectedCards[0].suit == 4 || player.selectedCards[1].suit == 4){
                 return true;
             }
@@ -271,12 +271,12 @@ class Game{
         }
 
         // greater rank means you can play it
-        if(player.selectedCards[0].rank > pool[0].rank){
+        if(player.selectedCards[0].rank > Game.pool[0].rank){
             return true;
         }
 
         // Whichever equivalent triple has the spade wins
-        else if(player.selectedCards[0].rank == pool[0].rank){
+        else if(player.selectedCards[0].rank == Game.pool[0].rank){
             if(player.selectedCards[0].suit == 4 || player.selectedCards[1].suit == 4 || player.selectedCards[2].suit == 4){
                 return true;
             }
@@ -285,17 +285,17 @@ class Game{
 
     static pokerCheck(player){
         //check for straight flush 
-        if(isStraightFlush(pool)){
-            if(!isStraightFlush(player.selectedCards)){
+        if(Game.isStraightFlush(Game.pool)){
+            if(!Game.isStraightFlush(player.selectedCards)){
                 return false;
             }
             
             else{
-                if(player.selectedCards[0].rank > pool[0].rank){
+                if(player.selectedCards[0].rank > Game.pool[0].rank){
                     return true;
                 }
-                else if(player.selectedCards[0].rank == pool[0].rank){
-                    return player.selectedCards[0].suit > pool[0].suit;
+                else if(player.selectedCards[0].rank == Game.pool[0].rank){
+                    return player.selectedCards[0].suit > Game.pool[0].suit;
                 }
                 else{
                     return false;
@@ -304,21 +304,21 @@ class Game{
         }
 
         //check for quad
-        if(isQuad(pool)){
+        if(Game.isQuad(pool)){
 
-            if(isStraightFlush(player.selectedCards)){
+            if(Game.isStraightFlush(player.selectedCards)){
                 return true;
             }
-            if(!isQuad(player.selectedCards)){
+            if(!Game.isQuad(player.selectedCards)){
                 return false;
             }
 
             else{
-                if(player.selectedCards[0].rank > pool[0].rank){
+                if(player.selectedCards[0].rank > Game.pool[0].rank){
                     return true;
                 }
-                else if(player.selectedCards[0].rank == pool[0].rank){
-                    return player.selectedCards[0].suit > pool[0].suit;
+                else if(player.selectedCards[0].rank == Game.pool[0].rank){
+                    return player.selectedCards[0].suit > Game.pool[0].suit;
                 }
                 else{
                     return false;
@@ -327,14 +327,14 @@ class Game{
         }
 
         //check for full house 
-        if(isFullHouse(pool)){
-            if(isStraightFlush(player.selectedCards)){
+        if(Game.isFullHouse(Game.pool)){
+            if(Game.isStraightFlush(player.selectedCards)){
                 return true;
             }
-            if(isQuad(player.selectedCards)){
+            if(Game.isQuad(player.selectedCards)){
                 return true;
             }
-            if(!isFullHouse(player.selectedCards)){
+            if(!Game.isFullHouse(player.selectedCards)){
                 return false;
             }
 
@@ -342,85 +342,85 @@ class Game{
                 //3-2 case:
                 if(player.selectedCards[0].rank == player.selectedCards[1].rank && player.selectedCards[1].rank == player.selectedCards[2].rank){
                     //3-2 case:
-                    if(pool[0].rank == pool[1].rank && pool[1].rank == pool[2].rank){
-                        return player.selectedCards[0].rank > pool[0].rank;
+                    if(Game.pool[0].rank == Game.pool[1].rank && Game.pool[1].rank == Game.pool[2].rank){
+                        return player.selectedCards[0].rank > Game.pool[0].rank;
                     }
                     //2-3 case:
-                    if(pool[2].rank == pool[3].rank && pool[3].rank == pool[4].rank){
-                        return player.selectedCards[0].rank > pool[2].rank;
+                    if(Game.pool[2].rank == Game.pool[3].rank && Game.pool[3].rank == Game.pool[4].rank){
+                        return player.selectedCards[0].rank > Game.pool[2].rank;
                     }
                 }
 
                 //2-3 case:
                 if(player.selectedCards[2].rank == player.selectedCards[3].rank && player.selectedCards[3].rank == player.selectedCards[4].rank){
                     //3-2 case:
-                    if(pool[0].rank == pool[1].rank && pool[1].rank == pool[2].rank){
-                        return player.selectedCards[2].rank > pool[0].rank;
+                    if(Game.pool[0].rank == Game.pool[1].rank && Game.pool[1].rank == Game.pool[2].rank){
+                        return player.selectedCards[2].rank > Game.pool[0].rank;
                     }
                     //2-3 case:
-                    if(pool[2].rank == pool[3].rank && pool[3].rank == pool[4].rank){
-                        return player.selectedCards[2].rank > pool[2].rank;
+                    if(Game.pool[2].rank == Game.pool[3].rank && Game.pool[3].rank == Game.pool[4].rank){
+                        return player.selectedCards[2].rank > Game.pool[2].rank;
                     }
                 }
             }
         }
 
         //check for flush
-        if(isFlush(pool)){
-            if(isStraightFlush(player.selectedCards)){
+        if(Game.isFlush(pool)){
+            if(Game.isStraightFlush(player.selectedCards)){
                 return true;
             }
-            if(isQuad(player.selectedCards)){
+            if(Game.isQuad(player.selectedCards)){
                 return true;
             }
-            if(isFullHouse(player.selectedCards)){
+            if(Game.isFullHouse(player.selectedCards)){
                 return true;
             }
-            if(!isFlush(player.selectedCards)){
+            if(!Game.isFlush(player.selectedCards)){
                 return false;
             }
 
             //for flushes, the highest cards are comapred and if everything is equal the suits are
-            for(let i = pool.length - 1; i >= 0; i ++){
-                if(player.selectedCards[i].rank < pool[i].rank){
+            for(let i = Game.pool.length - 1; i >= 0; i ++){
+                if(player.selectedCards[i].rank < Game.pool[i].rank){
                     return false;
                 }
-                else if(player.selectedCards[i].rank > pool[i].rank){
+                else if(player.selectedCards[i].rank > Game.pool[i].rank){
                     return true;
                 }
             }
 
-            return player.selectedCards[0].suit > pool[0].suit;
+            return player.selectedCards[0].suit > Game.pool[0].suit;
         }
 
         //check for straight
-        if(isStraight(pool)){
-            if(isStraightFlush(player.selectedCards)){
+        if(isStraight(Game.pool)){
+            if(Game.isStraightFlush(player.selectedCards)){
                 return true;
             }
-            if(isQuad(player.selectedCards)){
+            if(Game.isQuad(player.selectedCards)){
                 return true;
             }
-            if(isFullHouse(player.selectedCards)){
+            if(Game.isFullHouse(player.selectedCards)){
                 return true;
             }
-            if(isFlush(player.selectedCards)){
+            if(Game.isFlush(player.selectedCards)){
                 return true;
             }
-            if(!isStraight(player.selectedCards)){
+            if(!Game.isStraight(player.selectedCards)){
                 return false;
             }
 
             //checks card ranks first then suit
             else{
-                if(player.selectedCards[0].rank > pool[0].rank){
+                if(player.selectedCards[0].rank > Game.pool[0].rank){
                     return true;
                 }
-                else if(player.selectedCards[0].rank < pool[0].rank){
+                else if(player.selectedCards[0].rank < Game.pool[0].rank){
                     return false;
                 }
-                else if(player.selectedCards[0].rank == pool[0].rank){
-                    return player.selectedCards[0].suit > pool[0].suit;
+                else if(player.selectedCards[0].rank == Game.pool[0].rank){
+                    return player.selectedCards[0].suit > Game.pool[0].suit;
                 }
             }
 
@@ -461,7 +461,7 @@ class Game{
             return false;
         }
         //one possibility is 2-3 (since cards are sorted)
-        check1 = true
+        check1 = true;
         for(let i = 0; i < cards.length-1; i++){
             if(i != 1){
                 if(cards[i] != cards[i].rank){

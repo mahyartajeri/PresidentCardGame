@@ -6,7 +6,7 @@ class Player{
         VICEBUM: "vb",
         BUM: "b"
     }
-    position = positions.NEUTRAL;
+    position = Player.positions.NEUTRAL;
     selectedCards = [];
     hand = new Hand();
     wincount = 0;
@@ -14,7 +14,6 @@ class Player{
     constructor(playerID){
         this.playerID = playerID;
     }
-
 
 
     selectCard(i){
