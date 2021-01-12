@@ -6,7 +6,6 @@ class Game{
     static pool = [];
     static winners = [];
     static order = [];
-    static firstGame = true;
     static modes = {
         SINGLE: "single",
         DOUBLE: "double",
@@ -34,36 +33,47 @@ class Game{
     }
 
     static initializeGame(){
+        order = [];
         deck = new Deck();
         deck.shuffle();
         createPlayers();
         for(let i = 0; i < players.length; i++){
             fillHands(players[i]);
         }
-        //For the first game, everyone is neutral so the order doesn't matter
-        if(firstGame){
-            for(let i = 0; i < players.length; i++){
-                order.push(players[i].playerID)
-            }
+        //fill up the order 
+        for(let i = 0; i < players.length; i++){
+            order.push(players[i].playerID);
         }
-        else{
-            for(let i = 0; i < players.length; i++){
-                //bum goes first
-                if(players[i].position == "b"){
-                    this.order[0] = players[i].playerID;
-                }
-                else if(players[i].position == "vb"){
-                    this.order[1] = players[i].playerID;
-                }
-                else if(players[i].position == "vp"){
-                    this.order[1] = players[players.length-2].playerID;
-                }
-                //president goes last
-                else if(players[i].position == "p"){
-                    this.order[1] = players[players.length-1].playerID;
+        
+        
+    }
+
+    static resetGame(){
+        order = [];
+        deck = new Deck();
+        deck.shuffle();
+
+        for(let i = 0; i < players.length; i++){
+            players[i].clearHand();
+            fillHands(players[i]);
+        }
+
+        //after the first game, the bum will go first
+        
+        for(let i = 0; i < players.length; i++){
+            //bum goes first 
+            if(players[i].position == "b"){
+                if(i > 0){
+                    //shifts the order of player so that the bum is first
+                    shiftArr(order, players.length-i);
+                    break;
                 }
             }
+            
         }
+
+        winners = [];
+        
     }
 
     static shiftArr(arr, shift){
@@ -84,7 +94,7 @@ class Game{
         }
     }
 
-    static fillHands(player){
+    static fillHand(player){
         for(let i = 0; i < 52/playerCount; i++){
             player.hand.addCard(deck.draw());
         }
@@ -92,26 +102,67 @@ class Game{
 
     static exitPlayers(){
         for(let i = 0; i < players.length; i++){
-            //adds the player id of players who are done
+            // adds the player id of players who are done
             if(players[i].done()){
                 winners.push(players[i].playerID);
+            }
+        }
+        // removing won player from order
+        for(let i = 0; i < order.length; i++){
+            if(winners.includes(order[i])){
+                this.order.splice(i, 1);
             }
         }
     }
 
     static isGameOver(){
-        let remaining = 0;
+        let remaining = player.length;
         for(let i = 0; i < player.length; i++){
             if(players[i].done()){
-                remaining ++;
+                remaining --;
             }
         }
 
         return remaining == 1;
     }
 
+    static FinishGame(){
+        setWinners();
+        resetGame();
+    }
+
+    static setWinners(){
+        for(let i = 0; i < winners.length; i++){
+            if(i == 0){
+                winners[i].wincount += 1;
+                winners[i].position = Player.positions.PRESIDENT;
+            }
+            else if(i == 1){
+                winners[i].position = Player.positions.VICEPRESIDENT;
+            }
+            else if(i < length - 2){
+                winners[i].position = Player.positions.NEUTRAL;
+            }
+            else if(i == length - 2){
+                winners[i].position = Player.positions.VICEBUM;
+            }
+            else if(i == length - 1){
+                winners[i].position = Player.positions.BUM;
+            }
+        }
+    }
+
     static nextTurn(){
-        
+        for(let i = 0; i < order.length; i++){
+            if(order[i] == turn){
+                if(i < order.length + 1){
+                    turn = order[i+1];
+                }
+                else{
+                    turn = order[0];
+                }
+            }
+        }
     }
 
     static determineMode(cards){

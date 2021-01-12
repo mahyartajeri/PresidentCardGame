@@ -1,5 +1,5 @@
 class Player{ 
-    positions = {
+    static positions = {
         PRESIDENT: "p",
         VICEPRESIDENT: "vp",
         NEUTRAL: "n",
@@ -9,6 +9,7 @@ class Player{
     position = positions.NEUTRAL;
     selectedCards = [];
     hand = new Hand();
+    wincount = 0;
 
     constructor(playerID){
         this.playerID = playerID;
@@ -28,6 +29,10 @@ class Player{
         }
     }
 
+    clearHand(){
+        this.hand = new Hand();
+    }
+
     sortCards(){
         for(let i = 0; i < this.selectedCards.length-1; i++){
             for(let j = 0; j < this.selectedCards.length-i-1; i++){
@@ -43,11 +48,21 @@ class Player{
 
 
     playCards(){
-        sortCards()
+        this.sortCards();
         if(Game.validated(this, Game.determineMode(this.selectedCards))){
             Game.pool = this.selectedCards;
             this.selectedCards = [];
+            Game.exitPlayers();
+            if(Game.isGameOver()){
+                Game.finishGame();
+                return;
+            }
+            Game.nextTurn();
         }
+    }
+
+    passTurn(){
+        Game.nextTurn();
     }
 
     done(){
